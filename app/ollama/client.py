@@ -2,7 +2,7 @@ import os
 import json
 import requests
 
-BASE_URL = os.environ.get('OLLAMA_HOST', 'http://localhost:11434')
+BASE_URL = os.environ.get('OLLAMA_HOST', 'http://host.docker.internal:11434')
 
 # Generate a response for a given prompt with a provided model. This is a streaming endpoint, so will be a series of responses.
 # The final response object will include statistics and additional data from the request. Use the callback function to override
