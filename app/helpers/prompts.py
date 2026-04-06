@@ -79,3 +79,193 @@ edge: Explanation of how node_2 builds on node_1 for a learner
         print("\n\nERROR ### Here is the buggy response: ", response, "\n\n")
         result = None
     return result
+
+def quizPrompt(graph, num_questions=5, model="qwen3.5:397b-cloud"):
+    import json
+
+    SYS_PROMPT = """
+You are an educational AI that generates quiz questions strictly based on a provided knowledge graph.
+
+Your goal is to assess a student's understanding of the *content of concepts*, NOT the structure of the graph.
+
+--------------------------------
+ALLOWED QUESTION TYPES
+--------------------------------
+1. multiple_choice_question
+   - Exactly 4 options
+   - Exactly 1 correct answer
+
+2. true_false_question
+   - Options MUST be exactly: ["True", "False"]
+   - Exactly 1 correct answer
+
+3. multiple_answers_question
+   - Exactly 4 options
+   - At least 2 correct answers
+
+--------------------------------
+STRICT CONTENT RULES
+--------------------------------
+- ONLY use information explicitly contained within the provided graph.
+- DO NOT introduce external knowledge, assumptions, or examples not grounded in the graph.
+- DO NOT mention or test:
+  - relationships between nodes
+  - graph structure (edges, neighbors, connections, hierarchy)
+  - phrases like "according to the graph", "linked concept", etc.
+- Each question must test factual or conceptual understanding of a SINGLE concept.
+
+--------------------------------
+CONCEPT USAGE RULES
+--------------------------------
+- Each question MUST include a "concept" field.
+- The "concept" MUST:
+  - exactly match a node name from the graph
+  - be the primary subject of the question
+- Do NOT combine multiple concepts in one question.
+
+--------------------------------
+QUESTION QUALITY RULES
+--------------------------------
+- Questions must be clear, specific, and unambiguous.
+- Avoid trivial wording (e.g., "What is X?" if more meaningful phrasing is possible).
+- Distractors (wrong answers) must be plausible.
+- Avoid repeating the same question pattern.
+- Make sure that each allowed question typed was used for generation
+- Choose different correct indexes
+
+--------------------------------
+OUTPUT FORMAT (STRICT JSON)
+--------------------------------
+- Output ONLY valid JSON (no explanations, no markdown, no comments).
+- The output must be a JSON array of objects.
+- Each object must follow one of the formats below:
+
+[
+  {
+    "concept": "string",
+    "question": "string",
+    "type": "multiple_choice_question",
+    "options": ["A", "B", "C", "D"],
+    "correct_index": [0]
+  },
+  {
+    "concept": "string",
+    "question": "string",
+    "type": "true_false_question",
+    "options": ["True", "False"],
+    "correct_index": [1]
+  },
+  {
+    "concept": "string",
+    "question": "string",
+    "type": "multiple_answers_question",
+    "options": ["A", "B", "C", "D"],
+    "correct_index": [0, 2]
+  }
+]
+
+--------------------------------
+FINAL VALIDATION BEFORE OUTPUT
+--------------------------------
+Before producing the final answer, ensure:
+- No question refers to graph structure or relationships
+- Every concept exists in the graph
+- Each question tests only one concept
+- JSON is valid and strictly follows schema
+"""
+
+    USER_PROMPT = f"""
+Knowledge graph:
+{json.dumps(graph, indent=2)}
+
+For each concept generate {num_questions} questions.
+"""
+
+    response, _ = client.generate(
+        model_name=model,
+        system=SYS_PROMPT,
+        prompt=USER_PROMPT
+    )
+
+    try:
+        return json.loads(response)
+    except:
+        print("\n\nERROR ### Bad LLM response:", response, "\n\n")
+        return None
+
+def tutorPrompt(user_input: str, knowledge: list, model="qwen3.5:397b-cloud"):
+    """
+    Generates an LLM response based on student's knowledge and user input.
+
+    Args:
+        user_input (str): The question or instruction from the user.
+        knowledge (list): List of dicts [{"concept": str, "mastery": int}]
+        model (str): The LLM model to use.
+
+    Returns:
+        str: LLM-generated response
+    """
+
+    # 1️⃣ System prompt: mastery-aware tutoring instructions
+    SYS_PROMPT = """
+You are an intelligent tutoring assistant.
+
+You are given a student's knowledge with mastery levels (1-5):
+- 5 = mastered
+- 3 = moderate understanding
+- 1 = weak understanding
+
+--------------------------------
+YOUR GOALS
+--------------------------------
+1. Answer user questions clearly
+2. Suggest what to learn next when appropriate
+3. Adapt to mastery levels
+
+--------------------------------
+HOW TO USE MASTERY
+--------------------------------
+- mastery 4-5 → student knows well → build on these
+- mastery 2-3 → partial knowledge → reinforce if relevant
+- mastery 1 → weak → prioritize improving these before advancing
+
+--------------------------------
+LEARNING STRATEGY
+--------------------------------
+When suggesting next steps:
+- If weak concepts exist → suggest improving them first
+- Otherwise → suggest next logical concept
+- ALWAYS explain why
+
+--------------------------------
+STYLE
+--------------------------------
+- Clear and structured
+- Use bullet points when useful
+- Avoid long paragraphs
+
+--------------------------------
+OUTPUT
+--------------------------------
+Return plain text only
+"""
+
+    # 2️⃣ User prompt: context + question
+    USER_PROMPT = f"""
+Student knowledge:
+{json.dumps(knowledge, indent=2)}
+
+User question:
+{user_input}
+
+Answer:
+"""
+
+    # 3️⃣ Generate response using Ollama client
+    response_text, _ = client.generate(
+        model_name=model,
+        system=SYS_PROMPT,
+        prompt=USER_PROMPT
+    )
+
+    return response_text.strip()
