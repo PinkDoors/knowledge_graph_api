@@ -4,8 +4,8 @@ from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from app.helpers.df_helpers import df2Graph, graph2Df, documents2Dataframe
-from app.helpers.prompts import quizPrompt, tutorPrompt
-from app.models.ask import AskResponse, AskRequest
+from app.helpers.prompts import quizPrompt, tutorPrompt, tutorPromptWithGraph
+from app.models.ask import AskResponse, AskRequest, AskWithGraphRequest
 from app.models.models import DescriptionRequest, ConceptEdge, ConceptGraphResponse
 from app.models.quiz import QuizRequest, QuizResponse, QuizQuestion
 from app.validation.quiz_validator import validate_question
@@ -90,5 +90,33 @@ def ask(request: AskRequest):
 
     # Use tutorPrompt directly
     response_text = tutorPrompt(request.userPrompt, knowledge_list)
+
+    return AskResponse(response=response_text)
+
+@app.post("/ask-with-graph", response_model=AskResponse)
+def ask_with_graph(request: AskWithGraphRequest):
+    print(request.userPrompt)
+    print(request.knowledge)
+    print(request.graphEdges)
+
+    knowledge_list = [
+        {"concept": c, "mastery": m}
+        for c, m in request.knowledge.items()
+    ]
+
+    graph_list = [
+        {
+            "from": e.node_1,
+            "to": e.node_2,
+            "relation": e.edge
+        }
+        for e in request.graphEdges
+    ]
+
+    response_text = tutorPromptWithGraph(
+        request.userPrompt,
+        knowledge_list,
+        graph_list
+    )
 
     return AskResponse(response=response_text)
