@@ -80,6 +80,53 @@ edge: Explanation of how node_2 builds on node_1 for a learner
         result = None
     return result
 
+def graphPromptV2(input: str, metadata={}, model="mistral-openorca:latest"):
+    if model is None:
+        model = "mistral-openorca:latest"
+
+    SYS_PROMPT = (
+        '''
+You are given a subject description. Your task is to generate a learning graph.
+
+Rules:
+The structure MUST be a directed acyclic graph (DAG).
+Concepts can branch into multiple sub-concepts.
+A concept can depend on multiple prerequisite concepts.
+The goal is to reach the most advanced concept (final learning goal).
+
+Each concept MUST be atomic. Do not use "()" and "," symbols.
+
+Output only relationships; no explanations outside edges.
+
+OUTPUT FORMAT:
+Return a JSON list of edges. Each edge represents a dependency between two concepts.
+
+Each element:
+{
+node_from: prerequisite concept,
+node_to: dependent concept,
+edge: Explanation of how node_to builds on node_from
+}
+        '''
+    )
+
+    USER_PROMPT = f"context: ```{input}``` \n\n output: "
+
+    response, _ = client.generate(
+        model_name=model,
+        system=SYS_PROMPT,
+        prompt=USER_PROMPT
+    )
+
+    try:
+        result = json.loads(response)
+        result = [dict(item, **metadata) for item in result]
+    except:
+        print("\n\nERROR ### Here is the buggy response: ", response, "\n\n")
+        result = None
+
+    return result
+
 def quizPrompt(graph, num_questions=5, model="qwen3.5:397b-cloud"):
     import json
 
@@ -221,7 +268,7 @@ You are given:
 YOUR GOALS
 --------------------------------
 1. Answer user questions clearly
-2. Suggest what to learn next when appropriate
+2. Suggest which concept to learn next
 3. Adapt to mastery levels
 
 --------------------------------
@@ -234,9 +281,7 @@ When suggesting what to study next:
 
 - If no weak foundational concepts exist, identify the most logical next learning step.
 
-- Always explain your recommendation using:
-  - the student’s mastery levels
-  - logical progression of the subject matter
+- Always explain your recommendation.
 
 --------------------------------
 STYLE
@@ -261,6 +306,8 @@ User question:
 
 Answer:
 """
+
+
 
     # 3️⃣ Generate response using Ollama client
     response_text, _ = client.generate(
@@ -306,9 +353,8 @@ When a concept is mentioned:
 YOUR GOALS
 --------------------------------
 1. Answer user questions clearly
-2. Suggest what to learn next when appropriate
+2. Suggest which concept to learn next
 3. Adapt to mastery levels
-4. Use graph structure to improve reasoning and learning paths
 
 --------------------------------
 LEARNING STRATEGY
@@ -318,11 +364,9 @@ When suggesting what to study next:
 - First, identify concepts with low mastery that serve as foundations for other, more advanced concepts in the graph.
   Prioritize strengthening these foundational weak concepts before moving forward.
 
-- If no weak foundational concepts exist, continue by following the graph structure to identify the most logical next learning step.
+- If no weak foundational concepts exist, identify the most logical next learning step.
 
-- Always explain your recommendation using:
-  - the student’s mastery levels
-  - the relationships described in the graph edges
+- Always explain your recommendation.
 
 --------------------------------
 STYLE

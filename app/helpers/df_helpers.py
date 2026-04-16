@@ -1,7 +1,7 @@
 import uuid
 import pandas as pd
 import numpy as np
-from .prompts import extractConcepts
+from .prompts import extractConcepts, graphPromptV2
 from .prompts import graphPrompt
 
 
@@ -50,7 +50,7 @@ def concepts2Df(concepts_list) -> pd.DataFrame:
 def df2Graph(dataframe: pd.DataFrame, model=None) -> list:
     # dataframe.reset_index(inplace=True)
     results = dataframe.apply(
-        lambda row: graphPrompt(row.text, {"chunk_id": row.chunk_id}, model), axis=1
+        lambda row: graphPromptV2(row.text, {"chunk_id": row.chunk_id}, model), axis=1
     )
     # invalid json results in NaN
     results = results.dropna()
