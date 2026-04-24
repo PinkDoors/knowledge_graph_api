@@ -1,0 +1,259 @@
+{
+  "edges": [
+    {
+      "node_1": "primitive types",
+      "node_2": "variables",
+      "edge": "Variables store data using primitive types"
+    },
+    {
+      "node_1": "operators",
+      "node_2": "expressions",
+      "edge": "Expressions use operators to compute values"
+    },
+    {
+      "node_1": "variables",
+      "node_2": "expressions",
+      "edge": "Expressions evaluate variables to produce results"
+    },
+    {
+      "node_1": "expressions",
+      "node_2": "conditional statements",
+      "edge": "Conditional statements rely on expressions for logic"
+    },
+    {
+      "node_1": "expressions",
+      "node_2": "loop structures",
+      "edge": "Loop structures use expressions for iteration conditions"
+    },
+    {
+      "node_1": "conditional statements",
+      "node_2": "methods",
+      "edge": "Methods contain conditional statements for flow control"
+    },
+    {
+      "node_1": "loop structures",
+      "node_2": "methods",
+      "edge": "Methods contain loop structures for repetition"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "compilation units",
+      "edge": "Compilation units organize classes into files"
+    },
+    {
+      "node_1": "compilation units",
+      "node_2": "comments",
+      "edge": "Comments document code within compilation units"
+    },
+    {
+      "node_1": "methods",
+      "node_2": "parameter passing",
+      "edge": "Parameter passing defines how methods receive data"
+    },
+    {
+      "node_1": "methods",
+      "node_2": "execution stack",
+      "edge": "Execution stack manages method calls and returns"
+    },
+    {
+      "node_1": "parameter passing",
+      "node_2": "overloading",
+      "edge": "Overloading allows multiple methods with different parameters"
+    },
+    {
+      "node_1": "execution stack",
+      "node_2": "recursion",
+      "edge": "Recursion relies on the execution stack for nested calls"
+    },
+    {
+      "node_1": "methods",
+      "node_2": "exception handling",
+      "edge": "Exception handling manages errors within methods"
+    },
+    {
+      "node_1": "variables",
+      "node_2": "classes",
+      "edge": "Classes define blueprints for variables and behavior"
+    },
+    {
+      "node_1": "methods",
+      "node_2": "classes",
+      "edge": "Classes encapsulate methods as members"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "objects",
+      "edge": "Objects are instances created from classes"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "members",
+      "edge": "Members define fields and methods inside classes"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "constructors",
+      "edge": "Constructors initialize new class instances"
+    },
+    {
+      "node_1": "constructors",
+      "node_2": "initialization",
+      "edge": "Initialization sets initial state via constructors"
+    },
+    {
+      "node_1": "members",
+      "node_2": "access control",
+      "edge": "Access control restricts visibility of members"
+    },
+    {
+      "node_1": "access control",
+      "node_2": "encapsulation",
+      "edge": "Encapsulation hides internal state using access control"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "abstraction",
+      "edge": "Abstraction simplifies complexity through class design"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "inheritance",
+      "edge": "Inheritance allows classes to derive from other classes"
+    },
+    {
+      "node_1": "inheritance",
+      "node_2": "polymorphism",
+      "edge": "Overriding allows subclasses to redefine methods"
+    },
+    {
+      "node_1": "inheritance",
+      "node_2": "dynamic binding",
+      "edge": "Polymorphism enables objects to take multiple forms"
+    },
+    {
+      "node_1": "dynamic binding",
+      "node_2": "static binding",
+      "edge": "Dynamic binding resolves method calls at runtime"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "static binding",
+      "edge": "Static binding resolves method calls at compile time"
+    },
+    {
+      "node_1": "objects",
+      "node_2": "static types",
+      "edge": "Static types define object structure at compile time"
+    },
+    {
+      "node_1": "dynamic binding",
+      "node_2": "dynamic types",
+      "edge": "Dynamic types define object behavior at runtime"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "abstract types",
+      "edge": "Abstract types define incomplete classes for inheritance"
+    },
+    {
+      "node_1": "objects",
+      "node_2": "comparing objects",
+      "edge": "Comparing objects checks equality between instances"
+    },
+    {
+      "node_1": "objects",
+      "node_2": "cloning objects",
+      "edge": "Cloning objects creates copies of instances"
+    },
+    {
+      "node_1": "primitive types",
+      "node_2": "arrays",
+      "edge": "Arrays store multiple values of primitive types"
+    },
+    {
+      "node_1": "primitive types",
+      "node_2": "enumerations",
+      "edge": "Enumerations define fixed sets of constant values"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "generic programming",
+      "edge": "Generic programming allows classes to operate on any type"
+    },
+    {
+      "node_1": "variables",
+      "node_2": "scope",
+      "edge": "Scope defines the region where variables are valid"
+    },
+    {
+      "node_1": "members",
+      "node_2": "visibility",
+      "edge": "Visibility determines access to class members"
+    },
+    {
+      "node_1": "objects",
+      "node_2": "heap memory",
+      "edge": "Heap memory stores allocated objects"
+    },
+    {
+      "node_1": "execution stack",
+      "node_2": "stack memory",
+      "edge": "Stack memory stores local variables and method frames"
+    },
+    {
+      "node_1": "heap memory",
+      "node_2": "garbage collection",
+      "edge": "Garbage collection reclaims unused heap memory"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "name spaces",
+      "edge": "Name spaces organize classes to prevent naming conflicts"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "nesting types",
+      "edge": "Nesting types define classes within other classes"
+    },
+    {
+      "node_1": "methods",
+      "node_2": "multithreading",
+      "edge": "Multithreading allows methods to run concurrently"
+    },
+    {
+      "node_1": "multithreading",
+      "node_2": "synchronization",
+      "edge": "Synchronization coordinates access in multithreading"
+    },
+    {
+      "node_1": "compilation units",
+      "node_2": "java virtual machine",
+      "edge": "Java Virtual Machine executes compiled units"
+    },
+    {
+      "node_1": "java virtual machine",
+      "node_2": "class loading",
+      "edge": "Class loading brings classes into the virtual machine"
+    },
+    {
+      "node_1": "java virtual machine",
+      "node_2": "jit compilation",
+      "edge": "JIT Compilation optimizes code during execution"
+    },
+    {
+      "node_1": "generic programming",
+      "node_2": "java collections",
+      "edge": "Java Collections use generics for data structures"
+    },
+    {
+      "node_1": "java collections",
+      "node_2": "java streams",
+      "edge": "Java Streams process collection data functionally"
+    },
+    {
+      "node_1": "objects",
+      "node_2": "java gui",
+      "edge": "Java GUI builds interfaces using objects"
+    }
+  ]
+}

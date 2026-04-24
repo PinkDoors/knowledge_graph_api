@@ -2,7 +2,6 @@ import uuid
 import pandas as pd
 import numpy as np
 from .prompts import extractConcepts, graphPromptV2
-from .prompts import graphPrompt
 
 
 def documents2Dataframe(documents) -> pd.DataFrame:

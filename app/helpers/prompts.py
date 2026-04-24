@@ -49,7 +49,7 @@ The learning path MUST be strictly linear.
 If two concepts are learnt simultaneously the order of them is not significant. 
 Do NOT branch, skip, or create parallel paths.
 Output only the sequence of relationships; no extra explanations.
-Each concept MUST be atomic. Do not use "()" and "," symbols. 
+Each concept MUST be atomic. Do not use "()" and "," symbols. Do not create aggregated concepts that group multiple topics (e.g., ‘basics’, ‘fundamentals’, ‘core concepts’).
 
 OUTPUT FORMAT:
 Format your output strictly as a JSON list of ordered relationships. Each element represents one step in the learning path.
@@ -59,7 +59,7 @@ Example output (Do not include any other annotations, start with [ symbol immedi
 {
 node_1: Earlier concept in the learning path,
 node_2: Next atomic concept derived from the context,
-edge: Explanation of how node_2 builds on node_1 for a learner
+edge: Explanation of how node_2 builds on node_1
 },
 { }
 ]
@@ -86,27 +86,28 @@ def graphPromptV2(input: str, metadata={}, model="mistral-openorca:latest"):
 
     SYS_PROMPT = (
         '''
-You are given a subject description. Your task is to generate a learning graph.
+You are given a subject description. Your task is to generate a SINGLE fully-connected learning graph.
 
 Rules:
 The structure MUST be a directed acyclic graph (DAG).
 Concepts can branch into multiple sub-concepts.
 A concept can depend on multiple prerequisite concepts.
-The goal is to reach the most advanced concept (final learning goal).
-
-Each concept MUST be atomic. Do not use "()" and "," symbols.
+Each concept MUST be atomic. Do not use "()" and "," symbols. Do not create aggregated concepts that group multiple topics (e.g., ‘basics’, ‘fundamentals’, ‘core concepts’).
 
 Output only relationships; no explanations outside edges.
 
 OUTPUT FORMAT:
 Return a JSON list of edges. Each edge represents a dependency between two concepts.
+Example output (Do not include any other annotations, start with [ symbol immediately):
 
-Each element:
+[
 {
-node_from: prerequisite concept,
-node_to: dependent concept,
-edge: Explanation of how node_to builds on node_from
-}
+node_1: prerequisite concept,
+node_2: dependent concept,
+edge: Explanation of how node_2 builds on node_1
+},
+{ }
+]
         '''
     )
 
@@ -379,6 +380,146 @@ STYLE
 OUTPUT
 --------------------------------
 Return plain text only
+"""
+
+    USER_PROMPT = f"""
+Student knowledge:
+{json.dumps(knowledge, indent=2)}
+
+Knowledge graph:
+{json.dumps(graph, indent=2)}
+
+User question:
+{user_input}
+
+Answer:
+"""
+
+    response_text, _ = client.generate(
+        model_name=model,
+        system=SYS_PROMPT,
+        prompt=USER_PROMPT
+    )
+
+    return response_text.strip()
+
+def tutorPromptV2(user_input: str, knowledge: list, model="gpt-oss:120b-cloud"):
+    """
+    Generates an LLM response based on student's knowledge and user input.
+
+    Args:
+        user_input (str): The question or instruction from the user.
+        knowledge (list): List of dicts [{"concept": str, "mastery": int}]
+        model (str): The LLM model to use.
+
+    Returns:
+        str: LLM-generated response
+    """
+
+    # 1️⃣ System prompt: mastery-aware tutoring instructions
+    SYS_PROMPT = """
+You are an intelligent tutoring assistant.
+
+You are given:
+1. Student knowledge with mastery levels (0-100)
+
+- 80-100 = strong mastery
+- 50-79 = moderate understanding
+- 0-49 = weak understanding
+
+--------------------------------
+YOUR GOALS
+--------------------------------
+1. Suggest which concept to learn next
+
+--------------------------------
+LEARNING STRATEGY
+--------------------------------
+When suggesting what to study next:
+
+- First, identify concepts with low mastery that serve as foundations for other, more advanced concepts in the graph.
+  Prioritize strengthening these foundational weak concepts before moving forward.
+
+- If no weak foundational concepts exist, identify the most logical next learning step.
+
+--------------------------------
+OUTPUT
+--------------------------------
+Return only concept name
+"""
+
+    # 2️⃣ User prompt: context + question
+    USER_PROMPT = f"""
+Student knowledge:
+{json.dumps(knowledge, indent=2)}
+
+User question:
+{user_input}
+
+Answer:
+"""
+
+
+
+    # 3️⃣ Generate response using Ollama client
+    response_text, _ = client.generate(
+        model_name=model,
+        system=SYS_PROMPT,
+        prompt=USER_PROMPT
+    )
+
+    return response_text.strip()
+
+def tutorPromptWithGraphV2(user_input: str, knowledge: list, graph: list, model="gpt-oss:120b-cloud"):
+
+    SYS_PROMPT = """
+You are an intelligent tutoring assistant.
+
+You are given:
+1. Student knowledge with mastery levels (0-100)
+2. A knowledge graph describing relationships between concepts
+
+- 80-100 = strong mastery
+- 50-79 = moderate understanding
+- 0-49 = weak understanding
+
+--------------------------------
+GRAPH USAGE (IMPORTANT)
+--------------------------------
+Knowledge graph has:
+- node_1 and node_2 - concepts
+- edge - natural-language explanation of how node_2 builds on node_1 for a learner
+
+You MUST use the graph to:
+- Understand how concepts depend on or extend each other
+- Identify learning paths between simpler and more advanced concepts
+- Follow connections from node_1 → node_2 when reasoning
+- Use edge descriptions to explain WHY a concept leads to another
+
+When a concept is mentioned:
+- Check connected concepts in the graph
+- Use edge descriptions to understand how knowledge flows
+- If prerequisites are weak, highlight them before explaining advanced concepts
+
+--------------------------------
+YOUR GOALS
+--------------------------------
+1. Suggest which concept to learn next
+
+--------------------------------
+LEARNING STRATEGY
+--------------------------------
+When suggesting what to study next:
+
+- First, identify concepts with low mastery that serve as foundations for other, more advanced concepts in the graph.
+  Prioritize strengthening these foundational weak concepts before moving forward.
+
+- If no weak foundational concepts exist, identify the most logical next learning step.
+
+--------------------------------
+OUTPUT
+--------------------------------
+Return only concept name
 """
 
     USER_PROMPT = f"""

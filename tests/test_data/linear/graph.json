@@ -1,0 +1,259 @@
+{
+  "edges": [
+    {
+      "node_1": "primitive types",
+      "node_2": "variables",
+      "edge": "Variables store values of primitive types"
+    },
+    {
+      "node_1": "variables",
+      "node_2": "operators",
+      "edge": "Operators manipulate values stored in variables"
+    },
+    {
+      "node_1": "operators",
+      "node_2": "expressions",
+      "edge": "Expressions combine operators and variables"
+    },
+    {
+      "node_1": "expressions",
+      "node_2": "evaluation",
+      "edge": "Evaluation determines the result of expressions"
+    },
+    {
+      "node_1": "evaluation",
+      "node_2": "statements",
+      "edge": "Statements use evaluated expressions for actions"
+    },
+    {
+      "node_1": "statements",
+      "node_2": "control structures",
+      "edge": "Control structures manage statement execution flow"
+    },
+    {
+      "node_1": "control structures",
+      "node_2": "comments",
+      "edge": "Comments document code alongside control structures"
+    },
+    {
+      "node_1": "comments",
+      "node_2": "subprograms",
+      "edge": "Subprograms organize code beyond simple statements"
+    },
+    {
+      "node_1": "subprograms",
+      "node_2": "methods",
+      "edge": "Methods are subprograms within classes"
+    },
+    {
+      "node_1": "methods",
+      "node_2": "parameter passing",
+      "edge": "Parameter passing supplies data to methods"
+    },
+    {
+      "node_1": "parameter passing",
+      "node_2": "overloading",
+      "edge": "Overloading allows multiple methods with same name"
+    },
+    {
+      "node_1": "overloading",
+      "node_2": "execution stack",
+      "edge": "Execution stack manages method calls and returns"
+    },
+    {
+      "node_1": "execution stack",
+      "node_2": "recursion",
+      "edge": "Recursion uses the execution stack for self calls"
+    },
+    {
+      "node_1": "recursion",
+      "node_2": "exception handling",
+      "edge": "Exception handling manages runtime errors in recursion"
+    },
+    {
+      "node_1": "exception handling",
+      "node_2": "classes",
+      "edge": "Classes define blueprints for object oriented programming"
+    },
+    {
+      "node_1": "classes",
+      "node_2": "objects",
+      "edge": "Objects are instances created from classes"
+    },
+    {
+      "node_1": "objects",
+      "node_2": "instantiation",
+      "edge": "Instantiation is the process of creating objects"
+    },
+    {
+      "node_1": "instantiation",
+      "node_2": "members",
+      "edge": "Members are fields and methods within objects"
+    },
+    {
+      "node_1": "members",
+      "node_2": "constructors",
+      "edge": "Constructors initialize members during instantiation"
+    },
+    {
+      "node_1": "constructors",
+      "node_2": "initialization",
+      "edge": "Initialization sets initial state via constructors"
+    },
+    {
+      "node_1": "initialization",
+      "node_2": "access control",
+      "edge": "Access control restricts visibility of members"
+    },
+    {
+      "node_1": "access control",
+      "node_2": "encapsulation",
+      "edge": "Encapsulation hides internal state using access control"
+    },
+    {
+      "node_1": "encapsulation",
+      "node_2": "abstraction",
+      "edge": "Abstraction simplifies complexity through encapsulation"
+    },
+    {
+      "node_1": "abstraction",
+      "node_2": "inheritance",
+      "edge": "Inheritance allows classes to derive from others"
+    },
+    {
+      "node_1": "inheritance",
+      "node_2": "inclusion polymorphism",
+      "edge": "Inclusion polymorphism treats subclasses as superclasses"
+    },
+    {
+      "node_1": "inclusion polymorphism",
+      "node_2": "overriding",
+      "edge": "Overriding redefines inherited methods in subclasses"
+    },
+    {
+      "node_1": "overriding",
+      "node_2": "static binding",
+      "edge": "Static binding resolves method calls at compile time"
+    },
+    {
+      "node_1": "static binding",
+      "node_2": "dynamic binding",
+      "edge": "Dynamic binding resolves method calls at runtime"
+    },
+    {
+      "node_1": "dynamic binding",
+      "node_2": "static types",
+      "edge": "Static types are declared types known at compile time"
+    },
+    {
+      "node_1": "static types",
+      "node_2": "dynamic types",
+      "edge": "Dynamic types are actual object types at runtime"
+    },
+    {
+      "node_1": "dynamic types",
+      "node_2": "abstract types",
+      "edge": "Abstract types define interfaces without implementation"
+    },
+    {
+      "node_1": "abstract types",
+      "node_2": "comparing objects",
+      "edge": "Comparing objects checks equality between instances"
+    },
+    {
+      "node_1": "comparing objects",
+      "node_2": "cloning objects",
+      "edge": "Cloning objects creates copies of instances"
+    },
+    {
+      "node_1": "cloning objects",
+      "node_2": "arrays",
+      "edge": "Arrays store collections of same type objects"
+    },
+    {
+      "node_1": "arrays",
+      "node_2": "enumerations",
+      "edge": "Enumerations define fixed sets of named constants"
+    },
+    {
+      "node_1": "enumerations",
+      "node_2": "generic programming",
+      "edge": "Generic programming allows type parameterization"
+    },
+    {
+      "node_1": "generic programming",
+      "node_2": "scope",
+      "edge": "Scope defines region where variables are valid"
+    },
+    {
+      "node_1": "scope",
+      "node_2": "visibility",
+      "edge": "Visibility determines access to scoped elements"
+    },
+    {
+      "node_1": "visibility",
+      "node_2": "memory management",
+      "edge": "Memory management handles allocation for visible objects"
+    },
+    {
+      "node_1": "memory management",
+      "node_2": "garbage collection",
+      "edge": "Garbage collection reclaims unused memory automatically"
+    },
+    {
+      "node_1": "garbage collection",
+      "node_2": "name spaces",
+      "edge": "Name spaces organize classes to avoid naming conflicts"
+    },
+    {
+      "node_1": "name spaces",
+      "node_2": "compilation units",
+      "edge": "Compilation units are files containing name spaces"
+    },
+    {
+      "node_1": "compilation units",
+      "node_2": "nesting types",
+      "edge": "Nesting types define classes within other classes"
+    },
+    {
+      "node_1": "nesting types",
+      "node_2": "multithreading",
+      "edge": "Multithreading allows concurrent execution of nesting types"
+    },
+    {
+      "node_1": "multithreading",
+      "node_2": "synchronization issues",
+      "edge": "Synchronization issues manage access in multithreading"
+    },
+    {
+      "node_1": "synchronization issues",
+      "node_2": "virtual machine",
+      "edge": "Virtual machine executes code handling synchronization"
+    },
+    {
+      "node_1": "virtual machine",
+      "node_2": "class loading",
+      "edge": "Class loading brings classes into virtual machine"
+    },
+    {
+      "node_1": "class loading",
+      "node_2": "jit compilation",
+      "edge": "JIT compilation optimizes code during class loading"
+    },
+    {
+      "node_1": "jit compilation",
+      "node_2": "java standard data structures",
+      "edge": "Data structures utilize JIT compiled standard libraries"
+    },
+    {
+      "node_1": "java standard data structures",
+      "node_2": "java streams",
+      "edge": "Java Streams process data structures efficiently"
+    },
+    {
+      "node_1": "java streams",
+      "node_2": "java gui",
+      "edge": "Java GUI builds interfaces using streams and structures"
+    }
+  ]
+}

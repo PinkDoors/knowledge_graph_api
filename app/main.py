@@ -4,7 +4,7 @@ from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from app.helpers.df_helpers import df2Graph, graph2Df, documents2Dataframe
-from app.helpers.prompts import quizPrompt, tutorPrompt, tutorPromptWithGraph
+from app.helpers.prompts import quizPrompt, tutorPrompt, tutorPromptWithGraph, tutorPromptV2, tutorPromptWithGraphV2
 from app.models.ask import AskResponse, AskRequest, AskWithGraphRequest
 from app.models.models import DescriptionRequest, ConceptEdge, ConceptGraphResponse
 from app.models.quiz import QuizRequest, QuizResponse, QuizQuestion
@@ -34,7 +34,7 @@ def generate_graph(request: DescriptionRequest):
     df = documents2Dataframe(pages)
 
     # Extract concepts using your helper functions
-    concepts_list = df2Graph(df, model="qwen3.5:397b-cloud")
+    concepts_list = df2Graph(df, model="deepseek-v3.1:671b-cloud")
     dfg = graph2Df(concepts_list)
 
     # Clean dataframe
@@ -89,7 +89,7 @@ def ask(request: AskRequest):
     knowledge_list = [{"concept": c, "mastery": m} for c, m in request.knowledge.items()]
 
     # Use tutorPrompt directly
-    response_text = tutorPrompt(request.userPrompt, knowledge_list)
+    response_text = tutorPromptV2(request.userPrompt, knowledge_list)
 
     return AskResponse(response=response_text)
 
@@ -113,7 +113,7 @@ def ask_with_graph(request: AskWithGraphRequest):
         for e in request.graphEdges
     ]
 
-    response_text = tutorPromptWithGraph(
+    response_text = tutorPromptWithGraphV2(
         request.userPrompt,
         knowledge_list,
         graph_list
