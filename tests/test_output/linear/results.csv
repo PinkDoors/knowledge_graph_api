@@ -1,0 +1,107 @@
+mode,known_count,expected,actual,is_correct
+no_graph,0,primitive types,primitive types,True
+with_graph,0,primitive types,primitive types,True
+no_graph,1,variables,variables,True
+with_graph,1,variables,variables,True
+no_graph,2,operators,operators,True
+with_graph,2,operators,operators,True
+no_graph,3,expressions,expressions,True
+with_graph,3,expressions,expressions,True
+no_graph,4,evaluation,evaluation,True
+with_graph,4,evaluation,evaluation,True
+no_graph,5,statements,statements,True
+with_graph,5,statements,statements,True
+no_graph,6,control structures,control structures,True
+with_graph,6,control structures,control structures,True
+no_graph,7,comments,subprograms,False
+with_graph,7,comments,comments,True
+no_graph,8,subprograms,subprograms,True
+with_graph,8,subprograms,subprograms,True
+no_graph,9,methods,methods,True
+with_graph,9,methods,methods,True
+no_graph,10,parameter passing,parameter passing,True
+with_graph,10,parameter passing,parameter passing,True
+no_graph,11,overloading,classes,False
+with_graph,11,overloading,overloading,True
+no_graph,12,execution stack,classes,False
+with_graph,12,execution stack,execution stack,True
+no_graph,13,recursion,classes,False
+with_graph,13,recursion,recursion,True
+no_graph,14,exception handling,classes,False
+with_graph,14,exception handling,exception handling,True
+no_graph,15,classes,classes,True
+with_graph,15,classes,classes,True
+no_graph,16,objects,objects,True
+with_graph,16,objects,objects,True
+no_graph,17,instantiation,instantiation,True
+with_graph,17,instantiation,instantiation,True
+no_graph,18,members,members,True
+with_graph,18,members,members,True
+no_graph,19,constructors,constructors,True
+with_graph,19,constructors,constructors,True
+no_graph,20,initialization,initialization,True
+with_graph,20,initialization,initialization,True
+no_graph,21,access control,access control,True
+with_graph,21,access control,access control,True
+no_graph,22,encapsulation,encapsulation,True
+with_graph,22,encapsulation,encapsulation,True
+no_graph,23,abstraction,abstraction,True
+with_graph,23,abstraction,abstraction,True
+no_graph,24,inheritance,inheritance,True
+with_graph,24,inheritance,inheritance,True
+no_graph,25,inclusion polymorphism,scope,False
+with_graph,25,inclusion polymorphism,inclusion polymorphism,True
+no_graph,26,overriding,static types,False
+with_graph,26,overriding,overriding,True
+no_graph,27,static binding,static types,False
+with_graph,27,static binding,static binding,True
+no_graph,28,dynamic binding,static types,False
+with_graph,28,dynamic binding,dynamic binding,True
+no_graph,29,static types,static types,True
+with_graph,29,static types,static types,True
+no_graph,30,dynamic types,scope,False
+with_graph,30,dynamic types,dynamic types,True
+no_graph,31,abstract types,abstract types,True
+with_graph,31,abstract types,abstract types,True
+no_graph,32,comparing objects,scope,False
+with_graph,32,comparing objects,comparing objects,True
+no_graph,33,cloning objects,arrays,False
+with_graph,33,cloning objects,cloning objects,True
+no_graph,34,arrays,arrays,True
+with_graph,34,arrays,arrays,True
+no_graph,35,enumerations,scope,False
+with_graph,35,enumerations,enumerations,True
+no_graph,36,generic programming,scope,False
+with_graph,36,generic programming,generic programming,True
+no_graph,37,scope,scope,True
+with_graph,37,scope,scope,True
+no_graph,38,visibility,memory management,False
+with_graph,38,visibility,visibility,True
+no_graph,39,memory management,memory management,True
+with_graph,39,memory management,memory management,True
+no_graph,40,garbage collection,virtual machine,False
+with_graph,40,garbage collection,garbage collection,True
+no_graph,41,name spaces,name spaces,True
+with_graph,41,name spaces,name spaces,True
+no_graph,42,compilation units,compilation units,True
+with_graph,42,compilation units,compilation units,True
+no_graph,43,nesting types,virtual machine,False
+with_graph,43,nesting types,nesting types,True
+no_graph,44,multithreading,virtual machine,False
+with_graph,44,multithreading,multithreading,True
+no_graph,45,synchronization issues,virtual machine,False
+with_graph,45,synchronization issues,synchronization issues,True
+no_graph,46,virtual machine,virtual machine,True
+with_graph,46,virtual machine,virtual machine,True
+no_graph,47,class loading,class loading,True
+with_graph,47,class loading,class loading,True
+no_graph,48,jit compilation,java standard data structures,False
+with_graph,48,jit compilation,jit compilation,True
+no_graph,49,java standard data structures,java standard data structures,True
+with_graph,49,java standard data structures,java standard data structures,True
+no_graph,50,java streams,java streams,True
+with_graph,50,java streams,java streams,True
+no_graph,51,java gui,java gui,True
+with_graph,51,java gui,java gui,True
+no_graph,52,,design patterns,True
+with_graph,52,,Design Patterns,True

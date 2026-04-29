@@ -115,7 +115,7 @@ def run_tests():
     return results
 
 
-def save_to_csv(results, filename="resultsIteration3.csv"):
+def save_to_csv(results, filename="test_output/linear/resultsIteration3.csv"):
     keys = ["mode", "known_count", "expected", "actual", "is_correct"]
 
     with open(filename, "w", newline="", encoding="utf-8") as f:
