@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Dict, List
 
-from app.models.models import ConceptEdge
+from app.dto.graph import ConceptEdge
 
 
 class AskWithGraphRequest(BaseModel):

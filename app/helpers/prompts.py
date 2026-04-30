@@ -1,45 +1,16 @@
 import sys
-from yachalk import chalk
+
 sys.path.append("..")
 
 import json
 from app.ollama import client
 
-def extractConcepts(prompt: str, metadata={}, model="mistral-openorca:latest"):
-    SYS_PROMPT = (
-        "Your task is extract the key concepts (and non personal entities) mentioned in the given context. "
-        "Extract only the most important and atomistic concepts, if  needed break the concepts down to the simpler concepts."
-        "Categorize the concepts in one of the following categories: "
-        "[event, concept, place, object, document, organisation, condition, misc]\n"
-        "Format your output as a list of json with the following format:\n"
-        "[\n"
-        "   {\n"
-        '       "entity": The Concept,\n'
-        '       "importance": The concontextual importance of the concept on a scale of 1 to 5 (5 being the highest),\n'
-        '       "category": The Type of Concept,\n'
-        "   }, \n"
-        "{ }, \n"
-        "]\n"
-    )
-    # client.BASE_URL = "http://host.docker.internal:11434"
-    response, _ = client.generate(model_name=model, system=SYS_PROMPT, prompt=prompt)
-    try:
-        result = json.loads(response)
-        result = [dict(item, **metadata) for item in result]
-    except:
-        print("\n\nERROR ### Here is the buggy response: ", response, "\n\n")
-        result = None
-    return result
+model = "gpt-oss:120b-cloud"
 
-
-def graphPrompt(input: str, metadata={}, model="mistral-openorca:latest"):
-    if model == None:
-        model = "mistral-openorca:latest"
-
-    # model_info = client.show(model_name=model)
-    # print( chalk.blue(model_info))
-
-    SYS_PROMPT = (
+def graph_prompt_linear(user_input: str, metadata=None):
+    if metadata is None:
+        metadata = {}
+    sys_prompt = (
         '''
 You are given a subject description. Your task is to generate a single linear step-by-step learning path for this subject.
 Subject description is delimited by ``` and provided to you.
@@ -66,12 +37,8 @@ edge: Explanation of how node_2 builds on node_1
         '''
     )
 
-
-
-
-    # client.BASE_URL = "http://host.docker.internal:11434"
-    USER_PROMPT = f"context: ```{input}``` \n\n output: "
-    response, _ = client.generate(model_name=model, system=SYS_PROMPT, prompt=USER_PROMPT)
+    user_prompt = f"context: ```{user_input}``` \n\n output: "
+    response, _ = client.generate(model_name=model, system=sys_prompt, prompt=user_prompt)
     try:
         result = json.loads(response)
         result = [dict(item, **metadata) for item in result]
@@ -80,11 +47,11 @@ edge: Explanation of how node_2 builds on node_1
         result = None
     return result
 
-def graphPromptV2(input: str, metadata={}, model="mistral-openorca:latest"):
-    if model is None:
-        model = "mistral-openorca:latest"
 
-    SYS_PROMPT = (
+def graph_prompt_dag(user_input: str, metadata=None):
+    if metadata is None:
+        metadata = {}
+    sys_prompt = (
         '''
 You are given a subject description. Your task is to generate a SINGLE fully-connected learning graph.
 
@@ -111,12 +78,12 @@ edge: Explanation of how node_2 builds on node_1
         '''
     )
 
-    USER_PROMPT = f"context: ```{input}``` \n\n output: "
+    user_prompt = f"context: ```{user_input}``` \n\n output: "
 
     response, _ = client.generate(
         model_name=model,
-        system=SYS_PROMPT,
-        prompt=USER_PROMPT
+        system=sys_prompt,
+        prompt=user_prompt
     )
 
     try:
@@ -128,10 +95,9 @@ edge: Explanation of how node_2 builds on node_1
 
     return result
 
-def quizPrompt(graph, num_questions=5, model="qwen3.5:397b-cloud"):
-    import json
 
-    SYS_PROMPT = """
+def quiz_prompt(graph, num_questions=5):
+    sys_prompt = """
 You are an educational AI that generates quiz questions strictly based on a provided knowledge graph.
 
 Your goal is to assess a student's understanding of the *content of concepts*, NOT the structure of the graph.
@@ -222,7 +188,7 @@ Before producing the final answer, ensure:
 - JSON is valid and strictly follows schema
 """
 
-    USER_PROMPT = f"""
+    user_prompt = f"""
 Knowledge graph:
 {json.dumps(graph, indent=2)}
 
@@ -231,8 +197,8 @@ For each concept generate {num_questions} questions.
 
     response, _ = client.generate(
         model_name=model,
-        system=SYS_PROMPT,
-        prompt=USER_PROMPT
+        system=sys_prompt,
+        prompt=user_prompt
     )
 
     try:
@@ -241,21 +207,9 @@ For each concept generate {num_questions} questions.
         print("\n\nERROR ### Bad LLM response:", response, "\n\n")
         return None
 
-def tutorPrompt(user_input: str, knowledge: list, model="qwen3.5:397b-cloud"):
-    """
-    Generates an LLM response based on student's knowledge and user input.
 
-    Args:
-        user_input (str): The question or instruction from the user.
-        knowledge (list): List of dicts [{"concept": str, "mastery": int}]
-        model (str): The LLM model to use.
-
-    Returns:
-        str: LLM-generated response
-    """
-
-    # 1️⃣ System prompt: mastery-aware tutoring instructions
-    SYS_PROMPT = """
+def tutor_prompt(user_input: str, knowledge: list):
+    sys_prompt = """
 You are an intelligent tutoring assistant.
 
 You are given:
@@ -297,8 +251,7 @@ OUTPUT
 Return plain text only
 """
 
-    # 2️⃣ User prompt: context + question
-    USER_PROMPT = f"""
+    user_prompt = f"""
 Student knowledge:
 {json.dumps(knowledge, indent=2)}
 
@@ -308,20 +261,17 @@ User question:
 Answer:
 """
 
-
-
-    # 3️⃣ Generate response using Ollama client
     response_text, _ = client.generate(
         model_name=model,
-        system=SYS_PROMPT,
-        prompt=USER_PROMPT
+        system=sys_prompt,
+        prompt=user_prompt
     )
 
     return response_text.strip()
 
-def tutorPromptWithGraph(user_input: str, knowledge: list, graph: list, model="qwen3.5:397b-cloud"):
 
-    SYS_PROMPT = """
+def tutor_prompt_with_graph(user_input: str, knowledge: list, graph: list):
+    sys_prompt = """
 You are an intelligent tutoring assistant.
 
 You are given:
@@ -382,7 +332,7 @@ OUTPUT
 Return plain text only
 """
 
-    USER_PROMPT = f"""
+    user_prompt = f"""
 Student knowledge:
 {json.dumps(knowledge, indent=2)}
 
@@ -397,27 +347,16 @@ Answer:
 
     response_text, _ = client.generate(
         model_name=model,
-        system=SYS_PROMPT,
-        prompt=USER_PROMPT
+        system=sys_prompt,
+        prompt=user_prompt
     )
 
     return response_text.strip()
 
-def tutorPromptV2(user_input: str, knowledge: list, model="gpt-oss:120b-cloud"):
-    """
-    Generates an LLM response based on student's knowledge and user input.
 
-    Args:
-        user_input (str): The question or instruction from the user.
-        knowledge (list): List of dicts [{"concept": str, "mastery": int}]
-        model (str): The LLM model to use.
-
-    Returns:
-        str: LLM-generated response
-    """
-
-    # 1️⃣ System prompt: mastery-aware tutoring instructions
-    SYS_PROMPT = """
+# same as tutor_prompt but give only one concept as a response
+def tutor_prompt_v2(user_input: str, knowledge: list):
+    sys_prompt = """
 You are an intelligent tutoring assistant.
 
 You are given:
@@ -448,8 +387,7 @@ OUTPUT
 Return only concept name
 """
 
-    # 2️⃣ User prompt: context + question
-    USER_PROMPT = f"""
+    user_prompt = f"""
 Student knowledge:
 {json.dumps(knowledge, indent=2)}
 
@@ -459,20 +397,18 @@ User question:
 Answer:
 """
 
-
-
-    # 3️⃣ Generate response using Ollama client
     response_text, _ = client.generate(
         model_name=model,
-        system=SYS_PROMPT,
-        prompt=USER_PROMPT
+        system=sys_prompt,
+        prompt=user_prompt
     )
 
     return response_text.strip()
 
-def tutorPromptWithGraphV2(user_input: str, knowledge: list, graph: list, model="gpt-oss:120b-cloud"):
 
-    SYS_PROMPT = """
+# same as tutor_prompt_with_graph but give only one concept as a response
+def tutor_prompt_with_graph_v2(user_input: str, knowledge: list, graph: list):
+    sys_prompt = """
 You are an intelligent tutoring assistant.
 
 You are given:
@@ -522,7 +458,7 @@ OUTPUT
 Return only concept name
 """
 
-    USER_PROMPT = f"""
+    user_prompt = f"""
 Student knowledge:
 {json.dumps(knowledge, indent=2)}
 
@@ -537,8 +473,8 @@ Answer:
 
     response_text, _ = client.generate(
         model_name=model,
-        system=SYS_PROMPT,
-        prompt=USER_PROMPT
+        system=sys_prompt,
+        prompt=user_prompt
     )
 
     return response_text.strip()

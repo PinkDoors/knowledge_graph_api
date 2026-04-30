@@ -1,11 +1,12 @@
-from typing import List, Literal, Union
+from typing import List, Literal
+
 from pydantic import BaseModel, Field
 
-from app.models.models import ConceptEdge
+from app.dto.graph import ConceptEdge
 
 
 class QuizQuestion(BaseModel):
-    concept: str  # <-- added field
+    concept: str
 
     question: str
     type: Literal[

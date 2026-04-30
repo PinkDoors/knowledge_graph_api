@@ -3,11 +3,11 @@ from fastapi import FastAPI
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from app.helpers.df_helpers import df2Graph, graph2Df, documents2Dataframe
-from app.helpers.prompts import quizPrompt, tutorPrompt, tutorPromptWithGraph, tutorPromptV2, tutorPromptWithGraphV2
-from app.models.ask import AskResponse, AskRequest, AskWithGraphRequest
-from app.models.models import DescriptionRequest, ConceptEdge, ConceptGraphResponse
-from app.models.quiz import QuizRequest, QuizResponse, QuizQuestion
+from app.helpers.df_helpers import dataframe_to_edges, edges_to_dataframe, documents_to_dataframe
+from app.helpers.prompts import quiz_prompt, tutor_prompt, tutor_prompt_with_graph, tutor_prompt_v2, tutor_prompt_with_graph_v2
+from app.dto.ask import AskResponse, AskRequest, AskWithGraphRequest
+from app.dto.graph import DescriptionRequest, ConceptEdge, ConceptGraphResponse
+from app.dto.quiz import QuizRequest, QuizResponse, QuizQuestion
 from app.validation.quiz_validator import validate_question
 
 app = FastAPI(title="Text to Graph API")
@@ -31,17 +31,16 @@ def generate_graph(request: DescriptionRequest):
     pages = splitter.split_documents(documents)
 
     # Convert chunks to dataframe
-    df = documents2Dataframe(pages)
+    df = documents_to_dataframe(pages)
 
-    # Extract concepts using your helper functions
-    concepts_list = df2Graph(df, model="deepseek-v3.1:671b-cloud")
-    dfg = graph2Df(concepts_list)
+    # Extract edges
+    graph = dataframe_to_edges(df)
+    dfg = edges_to_dataframe(graph)
 
     # Clean dataframe
     dfg.replace("", np.nan, inplace=True)
     dfg.dropna(subset=["node_1", "node_2", "edge"], inplace=True)
 
-    # Convert to JSON-friendly format
     response = [
         ConceptEdge(
             node_1=str(row["node_1"]),
@@ -65,7 +64,7 @@ def generate_quiz_questions(request: QuizRequest):
         for e in request.graph
     ]
 
-    raw_questions = quizPrompt(graph_data, request.num_questions)
+    raw_questions = quiz_prompt(graph_data, request.num_questions)
 
     if not raw_questions:
         return QuizResponse(questions=[])
@@ -85,11 +84,9 @@ def generate_quiz_questions(request: QuizRequest):
 def ask(request: AskRequest):
     print(request.userPrompt)
     print(request.knowledge)
-    # Convert map -> list for prompt readability
     knowledge_list = [{"concept": c, "mastery": m} for c, m in request.knowledge.items()]
 
-    # Use tutorPrompt directly
-    response_text = tutorPromptV2(request.userPrompt, knowledge_list)
+    response_text = tutor_prompt_v2(request.userPrompt, knowledge_list)
 
     return AskResponse(response=response_text)
 
@@ -113,7 +110,7 @@ def ask_with_graph(request: AskWithGraphRequest):
         for e in request.graphEdges
     ]
 
-    response_text = tutorPromptWithGraphV2(
+    response_text = tutor_prompt_with_graph_v2(
         request.userPrompt,
         knowledge_list,
         graph_list

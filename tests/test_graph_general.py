@@ -8,18 +8,10 @@ BASE_URL = "http://localhost:8000"
 ASK_URL = f"{BASE_URL}/ask"
 ASK_WITH_GRAPH_URL = f"{BASE_URL}/ask-with-graph"
 
-
-# -----------------------------
-# Load JSON
-# -----------------------------
 def load_json(path):
     with open(path, "r") as f:
         return json.load(f)
 
-
-# -----------------------------
-# Build graph + prereqs
-# -----------------------------
 def build_graph(edges):
     graph = defaultdict(list)
     prereq = defaultdict(set)
@@ -34,17 +26,9 @@ def build_graph(edges):
 
     return graph, prereq, nodes
 
-
-# -----------------------------
-# Find roots
-# -----------------------------
 def find_roots(nodes, prereq):
     return [n for n in nodes if len(prereq[n]) == 0]
 
-
-# -----------------------------
-# DFS: extract all branches (root -> leaf paths)
-# -----------------------------
 def dfs(node, graph, path, all_paths):
     all_paths.append(path.copy())
     path.append(node)
@@ -69,17 +53,9 @@ def extract_branches(graph, nodes, prereq):
 
     return all_paths
 
-
-# -----------------------------
-# Knowledge state
-# -----------------------------
 def build_knowledge(nodes, learned):
     return {n: (100 if n in learned else 0) for n in nodes}
 
-
-# -----------------------------
-# API calls
-# -----------------------------
 def call_no_graph(knowledge):
     r = requests.post(ASK_URL, json={
         "userPrompt": "Next concept ONLY",
@@ -98,10 +74,6 @@ def call_with_graph(knowledge, edges):
     r.raise_for_status()
     return r.json()["response"]
 
-
-# -----------------------------
-# utils
-# -----------------------------
 def norm(x):
     return x.strip().lower()
 
@@ -109,16 +81,11 @@ def norm(x):
 def is_correct(pred, expected):
     return norm(pred) == norm(expected)
 
-
-# -----------------------------
-# Evaluate one branch
-# -----------------------------
-def evaluate_branch(branch, nodes, edges, graph, prereq):
-    results = []
+def evaluate_branch(branch, nodes, edges, prereq):
+    evaluation_results = []
 
     learned = set(branch)
 
-    # 🔥 HANDLE EMPTY STATE
     expected_next = [
     n for n in nodes
     if n not in learned and all(p in learned for p in prereq[n])
@@ -136,7 +103,7 @@ def evaluate_branch(branch, nodes, edges, graph, prereq):
     except Exception as e:
         r2 = f"ERROR: {e}"
 
-    results.append({
+    evaluation_results.append({
         "mode": "no_graph",
         "branch": " -> ".join(branch) if branch else "EMPTY",
         "learned": ",".join(sorted(learned)),
@@ -145,7 +112,7 @@ def evaluate_branch(branch, nodes, edges, graph, prereq):
         "is_correct": norm(r1) in {norm(x) for x in expected_next},
     })
 
-    results.append({
+    evaluation_results.append({
         "mode": "with_graph",
         "branch": " -> ".join(branch) if branch else "EMPTY",
         "learned": ",".join(sorted(learned)),
@@ -154,14 +121,9 @@ def evaluate_branch(branch, nodes, edges, graph, prereq):
         "is_correct": norm(r2) in {norm(x) for x in expected_next},
     })
 
-    return results
+    return evaluation_results
 
-
-# -----------------------------
-# Run
-# -----------------------------
 def run():
-    concepts_data = load_json("test_data/general/concepts.json")
     graph_data = load_json("test_data/general/graph.json")
 
     edges = graph_data["edges"]
@@ -183,15 +145,11 @@ def run():
     all_results = []
 
     for branch in branches:
-        all_results.extend(evaluate_branch(branch, nodes, edges, graph, prereq))
+        all_results.extend(evaluate_branch(branch, nodes, edges, prereq))
 
     return all_results
 
-
-# -----------------------------
-# Save CSV
-# -----------------------------
-def save(results, filename="test_output/general/branch_evaluationIteration7.csv"):
+def save(evaluation_results, filename="test_output/general/branch_evaluationIteration7.csv"):
     keys = [
         "mode",
         "branch",
@@ -204,12 +162,9 @@ def save(results, filename="test_output/general/branch_evaluationIteration7.csv"
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=keys)
         writer.writeheader()
-        writer.writerows(results)
+        writer.writerows(evaluation_results)
 
 
-# -----------------------------
-# Main
-# -----------------------------
 if __name__ == "__main__":
     results = run()
     save(results)

@@ -14,10 +14,6 @@ def load_json(path):
 
 
 def build_knowledge_state(concepts, known_count):
-    """
-    First N concepts = mastered (100)
-    Others = not mastered (0)
-    """
     knowledge = {}
     for i, concept in enumerate(concepts):
         knowledge[concept] = 100 if i < known_count else 0
@@ -25,17 +21,12 @@ def build_knowledge_state(concepts, known_count):
 
 
 def get_expected(concepts, known_count):
-    """
-    Expected = next concept in path
-    If last → None
-    """
     if known_count >= len(concepts):
         return None
     return concepts[known_count]
 
 
 def normalize(text):
-    """Normalize LLM output for comparison"""
     return text.strip().lower()
 
 
@@ -61,9 +52,6 @@ def call_ask_with_graph(knowledge, graph_edges):
 
 
 def is_correct(expected, actual):
-    """
-    Evaluation logic
-    """
     if expected is None:
         # Last concept → no strict expectation
         return True
@@ -78,25 +66,23 @@ def run_tests():
     concepts = concepts_data["concepts"]
     graph_edges = graph_data["edges"]
 
-    results = []
+    evaluation_results = []
 
     for known_count in range(len(concepts) + 1):
         knowledge = build_knowledge_state(concepts, known_count)
         expected = get_expected(concepts, known_count)
 
-        # ---- ASK (no graph)
         try:
             actual_no_graph = call_ask(knowledge)
         except Exception as e:
             actual_no_graph = f"ERROR: {e}"
 
-        # ---- ASK WITH GRAPH
         try:
             actual_with_graph = call_ask_with_graph(knowledge, graph_edges)
         except Exception as e:
             actual_with_graph = f"ERROR: {e}"
 
-        results.append({
+        evaluation_results.append({
             "mode": "no_graph",
             "known_count": known_count,
             "expected": expected,
@@ -104,7 +90,7 @@ def run_tests():
             "is_correct": is_correct(expected, actual_no_graph)
         })
 
-        results.append({
+        evaluation_results.append({
             "mode": "with_graph",
             "known_count": known_count,
             "expected": expected,
@@ -112,16 +98,16 @@ def run_tests():
             "is_correct": is_correct(expected, actual_with_graph)
         })
 
-    return results
+    return evaluation_results
 
 
-def save_to_csv(results, filename="test_output/linear/resultsIteration3.csv"):
+def save_to_csv(evaluation_results, filename="test_output/linear/resultsIteration3.csv"):
     keys = ["mode", "known_count", "expected", "actual", "is_correct"]
 
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=keys)
         writer.writeheader()
-        writer.writerows(results)
+        writer.writerows(evaluation_results)
 
 
 if __name__ == "__main__":

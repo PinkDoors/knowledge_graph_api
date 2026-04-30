@@ -9,5 +9,4 @@ class ConceptEdge(BaseModel):
     node_2: str
     edge: str
 
-# Response is simply a list of ConceptEdge
 ConceptGraphResponse = List[ConceptEdge]
